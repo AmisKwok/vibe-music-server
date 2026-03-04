@@ -15,8 +15,8 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Spring%20Boot-3.2.0-6DB33F?style=flat-square&logo=springboot" alt="Spring Boot">
-  <img src="https://img.shields.io/badge/Java-17-ED8B00?style=flat-square&logo=openjdk" alt="Java">
+  <img src="https://img.shields.io/badge/Spring%20Boot-3.5.10-6DB33F?style=flat-square&logo=springboot" alt="Spring Boot">
+  <img src="https://img.shields.io/badge/Java-21-ED8B00?style=flat-square&logo=openjdk" alt="Java">
   <img src="https://img.shields.io/badge/MySQL-8.0+-4479A1?style=flat-square&logo=mysql" alt="MySQL">
   <img src="https://img.shields.io/badge/Redis-7.0+-DC382D?style=flat-square&logo=redis" alt="Redis">
   <img src="https://img.shields.io/badge/Version-1.0.0-blue?style=flat-square" alt="Version">
@@ -170,9 +170,9 @@ public SongVO getSongById(Long id) {
 
 | 技术 | 版本 | 说明 |
 |------|------|------|
-| Spring Boot | 3.2.0 | 后端框架 |
-| Java | 17 | 编程语言 |
-| Maven | 3.6+ | 项目构建工具 |
+| Spring Boot | 3.5.10 | 后端框架 |
+| Java | 21 | 编程语言 |
+| Maven | 3.9+ | 项目构建工具 |
 
 ### 数据存储
 
@@ -263,11 +263,11 @@ public SongVO getSongById(Long id) {
 
 ### 前提条件
 
-- JDK 17 或更高版本
+- JDK 21 或更高版本
 - MySQL 8.0+
 - Redis 7.0+
 - MinIO 最新版本
-- Maven 3.6+
+- Maven 3.9+
 
 ### 安装步骤
 

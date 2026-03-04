@@ -15,8 +15,8 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Spring%20Boot-3.2.0-6DB33F?style=flat-square&logo=springboot" alt="Spring Boot">
-  <img src="https://img.shields.io/badge/Java-17-ED8B00?style=flat-square&logo=openjdk" alt="Java">
+  <img src="https://img.shields.io/badge/Spring%20Boot-3.5.10-6DB33F?style=flat-square&logo=springboot" alt="Spring Boot">
+  <img src="https://img.shields.io/badge/Java-21-ED8B00?style=flat-square&logo=openjdk" alt="Java">
   <img src="https://img.shields.io/badge/MySQL-8.0+-4479A1?style=flat-square&logo=mysql" alt="MySQL">
   <img src="https://img.shields.io/badge/Redis-7.0+-DC382D?style=flat-square&logo=redis" alt="Redis">
   <img src="https://img.shields.io/badge/Version-1.0.0-blue?style=flat-square" alt="Version">
@@ -171,7 +171,7 @@ public SongVO getSongById(Long id) {
 | Technology | Version | Description |
 |------|------|------|
 | Spring Boot | 3.2.0 | Backend framework |
-| Java | 17 | Programming language |
+| Java | 21 | Programming language |
 | Maven | 3.6+ | Project build tool |
 
 ### Data Storage
@@ -267,7 +267,7 @@ This project adopts the classic **Three-Layer Architecture** pattern:
 - MySQL 8.0+
 - Redis 7.0+
 - MinIO latest version
-- Maven 3.6+
+- Maven 3.9+
 
 ### Installation Steps
 
