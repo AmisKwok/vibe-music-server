@@ -45,8 +45,7 @@ public class DeviceInfoServiceImpl implements DeviceInfoService {
     @Autowired
     private UserMapper userMapper;
 
-    @Override
-    public void saveDeviceInfo(String clientType, String ip, Long userId, String username, Map<String, String> deviceInfo) {
+    private void saveDeviceInfo(String clientType, String ip, Long userId, String username, Map<String, String> deviceInfo) {
         LocalDateTime now = LocalDateTime.now();
 
         switch (clientType.toLowerCase()) {
@@ -180,8 +179,7 @@ public class DeviceInfoServiceImpl implements DeviceInfoService {
         }
     }
 
-    @Override
-    public String truncateString(String str, int maxLength) {
+    private String truncateString(String str, int maxLength) {
         if (str == null) {
             return null;
         }
@@ -192,26 +190,74 @@ public class DeviceInfoServiceImpl implements DeviceInfoService {
         return str.substring(0, maxLength);
     }
 
-    @Override
-    public String getClientIPAddress(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-            // 多次反向代理后会有多个IP值，第一个IP才是真实IP
-            if (ip.contains(",")) {
-                ip = ip.split(",")[0];
+    private String getClientIPAddress(HttpServletRequest request) {
+        String ip = null;
+
+        // 调试日志：列出所有Header用于诊断
+        if (log.isDebugEnabled()) {
+            log.debug("=== IP 获取调试信息 ===");
+            java.util.Enumeration<String> headerNames = request.getHeaderNames();
+            while (headerNames.hasMoreElements()) {
+                String headerName = headerNames.nextElement();
+                log.debug("Header '{}': {}", headerName, request.getHeader(headerName));
             }
-            return ip;
+            log.debug("==========================");
         }
 
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
+        // 检查所有可能的IP Header
+        String[] ipHeaders = {
+            "X-Forwarded-For",
+            "Proxy-Client-IP",
+            "WL-Proxy-Client-IP",
+            "HTTP_X_FORWARDED_FOR",
+            "HTTP_CLIENT_IP",
+            "HTTP_X_FORWARDED",
+            "HTTP_X_CLUSTER_CLIENT_IP",
+            "HTTP_FORWARDED_FOR",
+            "X-Real-IP"
+        };
+
+        for (String header : ipHeaders) {
+            ip = request.getHeader(header);
+            log.debug("检查Header '{}': {}", header, ip);
+            if (isValidIp(ip)) {
+                log.debug("从Header '{}' 获取到有效IP: {}", header, ip);
+                return getFirstIp(ip);
+            }
         }
 
+        // 如果所有代理Header都无效，回退到直接连接IP
+        ip = request.getRemoteAddr();
+        log.debug("回退到直接连接IP: {}", ip);
+
+        // 处理本地IPv6地址转IPv4
+        if ("0:0:0:0:0:0:0:1".equals(ip) || "::1".equals(ip)) {
+            ip = "127.0.0.1";
+            log.debug("IPv6地址转换为IPv4: {}", ip);
+        }
+
+        log.debug("最终确定IP: {}", ip);
         return ip;
     }
 
-    @Override
-    public void logDeviceInfo(Map<String, String> deviceInfo) {
+    /**
+     * 验证IP地址是否有效
+     */
+    private boolean isValidIp(String ip) {
+        return ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip);
+    }
+
+    /**
+     * 从逗号分隔的IP列表中获取第一个IP
+     */
+    private String getFirstIp(String ip) {
+        if (ip != null && ip.contains(",")) {
+            return ip.split(",")[0].trim();
+        }
+        return ip;
+    }
+
+    private void logDeviceInfo(Map<String, String> deviceInfo) {
         log.info("===== 设备信息 =====");
         deviceInfo.forEach((key, value) ->
                 log.info("{}: {}", key, value));

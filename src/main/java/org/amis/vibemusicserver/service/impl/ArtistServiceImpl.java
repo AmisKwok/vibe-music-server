@@ -11,7 +11,6 @@ import org.amis.vibemusicserver.model.vo.ArtistDetailVO;
 import org.amis.vibemusicserver.model.vo.ArtistNameVO;
 import org.amis.vibemusicserver.model.vo.ArtistVO;
 import org.amis.vibemusicserver.result.PageResult;
-import org.amis.vibemusicserver.result.Result;
 import org.amis.vibemusicserver.service.IArtistService;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,7 @@ import java.util.List;
 
 /**
  * @author : KwokChichung
- * @description :
+ * @description : 歌手服务实现类，负责处理歌手相关的业务逻辑
  * @createDate : 2026/1/17 11:32
  */
 @Service
@@ -28,58 +27,58 @@ import java.util.List;
 public class ArtistServiceImpl extends ServiceImpl<ArtistMapper, Artist> implements IArtistService {
 
     @Override
-    public Result<PageResult<ArtistVO>> getAllArtists(ArtistDTO artistDTO) {
+    public PageResult<ArtistVO> getAllArtists(ArtistDTO artistDTO) {
         return null;
     }
 
     @Override
-    public Result<PageResult<Artist>> getAllArtistsAndDetail(ArtistDTO artistDTO) {
+    public PageResult<Artist> getAllArtistsAndDetail(ArtistDTO artistDTO) {
         return null;
     }
 
     @Override
-    public Result<List<ArtistNameVO>> getAllArtistNames() {
+    public List<ArtistNameVO> getAllArtistNames() {
         return null;
     }
 
     @Override
-    public Result<List<ArtistVO>> getRandomArtists() {
+    public List<ArtistVO> getRandomArtists() {
         return null;
     }
 
     @Override
-    public Result<ArtistDetailVO> getArtistDetail(Long artistId, HttpServletRequest request) {
+    public ArtistDetailVO getArtistDetail(Long artistId, HttpServletRequest request) {
         return null;
     }
 
     @Override
-    public Result<Long> getAllArtistsCount(Integer gender, String area) {
+    public Long getAllArtistsCount(Integer gender, String area) {
         return null;
     }
 
     @Override
-    public Result addArtist(ArtistAddDTO artistAddDTO) {
-        return null;
+    public void addArtist(ArtistAddDTO artistAddDTO) {
+        return;
     }
 
     @Override
-    public Result updateArtist(ArtistUpdateDTO artistUpdateDTO) {
-        return null;
+    public void updateArtist(ArtistUpdateDTO artistUpdateDTO) {
+        return;
     }
 
     @Override
-    public Result updateArtistAvatar(Long artistId, String avatar) {
-        return null;
+    public void updateArtistAvatar(Long artistId, String avatar) {
+        return;
     }
 
     @Override
-    public Result deleteArtist(Long ArtistId) {
-        return null;
+    public void deleteArtist(Long ArtistId) {
+        return;
     }
 
     @Override
-    public Result deleteArtists(List<Long> artistIds) {
-        return null;
+    public void deleteArtists(List<Long> artistIds) {
+        return;
     }
 }
 

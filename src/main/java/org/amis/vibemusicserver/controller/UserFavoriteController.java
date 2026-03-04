@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * @author : KwokChichung
- * @description :
+ * @description : 用户收藏控制器类，负责处理用户收藏相关的请求
  * @createDate : 2026/1/18 10:28
  */
 @RestController
@@ -30,7 +30,8 @@ public class UserFavoriteController {
      */
     @PostMapping("/getFavoriteSongs")
     public Result<PageResult<SongVO>> getUserFavoriteSongs(@RequestBody @Valid SongDTO songDTO) {
-        return userFavoriteService.getUserFavoriteSongs(songDTO);
+        PageResult<SongVO> pageResult = userFavoriteService.getUserFavoriteSongs(songDTO);
+        return Result.success(pageResult);
     }
 
     /**
@@ -41,7 +42,8 @@ public class UserFavoriteController {
      */
     @PostMapping("/collectSong")
     public Result collectSong(@RequestParam Long songId) {
-        return userFavoriteService.collectSong(songId);
+        userFavoriteService.collectSong(songId);
+        return Result.success();
     }
 
     /**
@@ -52,7 +54,8 @@ public class UserFavoriteController {
      */
     @DeleteMapping("/cancelCollectSong")
     public Result cancelCollectSong(@RequestParam Long songId) {
-        return userFavoriteService.cancelCollectSong(songId);
+        userFavoriteService.cancelCollectSong(songId);
+        return Result.success();
     }
 
     /**
@@ -62,7 +65,8 @@ public class UserFavoriteController {
      */
     @PostMapping("/getFavoritePlaylists")
     public Result<PageResult<PlaylistVO>> getFavoritePlaylists(@RequestBody @Valid PlaylistDTO playlistDTO) {
-        return userFavoriteService.getUserFavoritePlaylists(playlistDTO);
+        PageResult<PlaylistVO> pageResult = userFavoriteService.getUserFavoritePlaylists(playlistDTO);
+        return Result.success(pageResult);
     }
 
     /**
@@ -73,7 +77,8 @@ public class UserFavoriteController {
      */
     @PostMapping("/collectPlaylist")
     public Result collectPlaylist(@RequestParam Long playlistId) {
-        return userFavoriteService.collectPlaylist(playlistId);
+        userFavoriteService.collectPlaylist(playlistId);
+        return Result.success();
     }
 
     /**
@@ -84,7 +89,8 @@ public class UserFavoriteController {
      */
     @DeleteMapping("/cancelCollectPlaylist")
     public Result cancelCollectPlaylist(@RequestParam Long playlistId) {
-        return userFavoriteService.cancelCollectPlaylist(playlistId);
+        userFavoriteService.cancelCollectPlaylist(playlistId);
+        return Result.success();
     }
 }
 

@@ -7,26 +7,51 @@ import org.amis.vibemusicserver.model.entity.UserFavorite;
 import org.amis.vibemusicserver.model.vo.PlaylistVO;
 import org.amis.vibemusicserver.model.vo.SongVO;
 import org.amis.vibemusicserver.result.PageResult;
-import org.amis.vibemusicserver.result.Result;
 
 public interface IUserFavoriteService extends IService<UserFavorite> {
 
-    // 获取用户收藏的歌曲列表
-    Result<PageResult<SongVO>> getUserFavoriteSongs(SongDTO songDTO);
+    /**
+     * 获取用户收藏的歌曲列表
+     *
+     * @param songDTO 歌曲查询条件
+     * @return 歌曲分页结果
+     */
+    PageResult<SongVO> getUserFavoriteSongs(SongDTO songDTO);
 
-    // 收藏歌曲
-    Result collectSong(Long songId);
+    /**
+     * 收藏歌曲
+     *
+     * @param songId 歌曲id
+     */
+    void collectSong(Long songId);
 
-    // 取消收藏歌曲
-    Result cancelCollectSong(Long songId);
+    /**
+     * 取消收藏歌曲
+     *
+     * @param songId 歌曲id
+     */
+    void cancelCollectSong(Long songId);
 
-    // 获取用户收藏的歌单列表
-    Result<PageResult<PlaylistVO>> getUserFavoritePlaylists(PlaylistDTO playlistDTO);
+    /**
+     * 获取用户收藏的歌单列表
+     *
+     * @param playlistDTO 歌单查询条件
+     * @return 歌单分页结果
+     */
+    PageResult<PlaylistVO> getUserFavoritePlaylists(PlaylistDTO playlistDTO);
 
-    // 收藏歌单
-    Result collectPlaylist(Long playlistId);
+    /**
+     * 收藏歌单
+     *
+     * @param playlistId 歌单id
+     */
+    void collectPlaylist(Long playlistId);
 
-    // 取消收藏歌单
-    Result cancelCollectPlaylist(Long playlistId);
+    /**
+     * 取消收藏歌单
+     *
+     * @param playlistId 歌单id
+     */
+    void cancelCollectPlaylist(Long playlistId);
 
 }

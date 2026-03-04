@@ -60,7 +60,8 @@ public class AdminController {
             return Result.error(errorMessage);
         }
         log.info("管理员注册成功: {}", adminDTO.getUsername());
-        return adminService.register(adminDTO);
+        adminService.register(adminDTO);
+        return Result.success();
     }
 
     /**
@@ -71,15 +72,15 @@ public class AdminController {
      * @return 结果
      */
     @PostMapping("/login")
-    public Result login(@RequestBody @Valid AdminDTO adminDTO, BindingResult bindingResult) {
+    public Result<TokenDTO> login(@RequestBody @Valid AdminDTO adminDTO, BindingResult bindingResult) {
         // 校验失败时，返回错误信息
         String errorMessage = BindingResultUtil.handleBindingResultErrors(bindingResult);
         if (errorMessage != null) {
             log.warn("管理员登录校验失败: {}", errorMessage);
             return Result.error(errorMessage);
         }
-        return adminService.login(adminDTO);
-
+        TokenDTO tokenDTO = adminService.login(adminDTO);
+        return Result.success(tokenDTO);
     }
 
     /**
@@ -90,7 +91,8 @@ public class AdminController {
      */
     @PostMapping("/logout")
     public Result logout(@RequestHeader("Authorization") String token) {
-        return adminService.logout(token);
+        adminService.logout(token);
+        return Result.success();
     }
 
     //**********************************************************************************************/
@@ -102,7 +104,8 @@ public class AdminController {
      */
     @GetMapping("/getAllUsersCount")
     public Result<Long> getAllUsersCount() {
-        return userService.getAllUsersCount();
+        Long count = userService.getAllUsersCount();
+        return Result.success(count);
     }
 
     /**
@@ -113,7 +116,8 @@ public class AdminController {
      */
     @PostMapping("/getAllUsers")
     public Result<PageResult<UserManagementVO>> getAllUsers(@RequestBody UserSearchDTO userSearchDTO) {
-        return userService.getAllUsers(userSearchDTO);
+        PageResult<UserManagementVO> pageResult = userService.getAllUsers(userSearchDTO);
+        return Result.success(pageResult);
     }
 
     /**
@@ -130,7 +134,8 @@ public class AdminController {
         if (errorMessage != null) {
             return Result.error(errorMessage);
         }
-        return userService.addUser(userAddDTO);
+        userService.addUser(userAddDTO);
+        return Result.success();
     }
 
     /**
@@ -147,7 +152,8 @@ public class AdminController {
         if (errorMessage != null) {
             return Result.error(errorMessage);
         }
-        return userService.updateUser(userDTO);
+        userService.updateUser(userDTO);
+        return Result.success();
     }
 
     /**
@@ -159,7 +165,8 @@ public class AdminController {
      */
     @PatchMapping("/updateUserStatus/{id}/{status}")
     public Result updateUserStatus(@PathVariable("id") Long userId, @PathVariable("status") Integer userStatus) {
-        return userService.updateUserStatus(userId, userStatus);
+        userService.updateUserStatus(userId, userStatus);
+        return Result.success();
     }
 
     /**
@@ -170,7 +177,8 @@ public class AdminController {
      */
     @DeleteMapping("/deleteUser/{id}")
     public Result deleteUser(@PathVariable("id") Long userId) {
-        return userService.deleteUser(userId);
+        userService.deleteUser(userId);
+        return Result.success();
     }
 
     /**
@@ -181,7 +189,8 @@ public class AdminController {
      */
     @DeleteMapping("/deleteUsers")
     public Result deleteUsers(@RequestBody List<Long> userIds) {
-        return userService.deleteUsers(userIds);
+        userService.deleteUsers(userIds);
+        return Result.success();
     }
 
     //**********************************************************************************************/
@@ -196,7 +205,8 @@ public class AdminController {
      */
     @GetMapping("/getAllArtistsCount")
     public Result<Long> getAllArtistsCount(@RequestParam(required = false) Integer gender, @RequestParam(required = false) String area) {
-        return artistService.getAllArtistsCount(gender, area);
+        Long count = artistService.getAllArtistsCount(gender, area);
+        return Result.success(count);
     }
 
     /**
@@ -207,7 +217,8 @@ public class AdminController {
      */
     @PostMapping("/getAllArtists")
     public Result<PageResult<Artist>> getAllArtists(@RequestBody ArtistDTO artistDTO) {
-        return artistService.getAllArtistsAndDetail(artistDTO);
+        PageResult<Artist> pageResult = artistService.getAllArtistsAndDetail(artistDTO);
+        return Result.success(pageResult);
     }
 
     /**
@@ -218,7 +229,8 @@ public class AdminController {
      */
     @PostMapping("/addArtist")
     public Result addArtist(@RequestBody ArtistAddDTO artistAddDTO) {
-        return artistService.addArtist(artistAddDTO);
+        artistService.addArtist(artistAddDTO);
+        return Result.success();
     }
 
     /**
@@ -229,7 +241,8 @@ public class AdminController {
      */
     @PutMapping("/updateArtist")
     public Result updateArtist(@RequestBody ArtistUpdateDTO artistUpdateDTO) {
-        return artistService.updateArtist(artistUpdateDTO);
+        artistService.updateArtist(artistUpdateDTO);
+        return Result.success();
     }
 
     /**
@@ -242,7 +255,8 @@ public class AdminController {
     @PatchMapping("/updateArtistAvatar/{id}")
     public Result updateArtistAvatar(@PathVariable("id") Long artistId, @RequestParam("avatar") MultipartFile avatar) {
         String avatarUrl = minioService.uploadFile(avatar, "artists");  // 上传到 artists 目录
-        return artistService.updateArtistAvatar(artistId, avatarUrl);
+        artistService.updateArtistAvatar(artistId, avatarUrl);
+        return Result.success();
     }
 
     /**
@@ -253,7 +267,8 @@ public class AdminController {
      */
     @DeleteMapping("/deleteArtist/{id}")
     public Result deleteArtist(@PathVariable("id") Long artistId) {
-        return artistService.deleteArtist(artistId);
+        artistService.deleteArtist(artistId);
+        return Result.success();
     }
 
     /**
@@ -264,7 +279,8 @@ public class AdminController {
      */
     @DeleteMapping("/deleteArtists")
     public Result deleteArtists(@RequestBody List<Long> artistIds) {
-        return artistService.deleteArtists(artistIds);
+        artistService.deleteArtists(artistIds);
+        return Result.success();
     }
 
     //**********************************************************************************************/
@@ -277,7 +293,8 @@ public class AdminController {
      */
     @GetMapping("/getAllSongsCount")
     public Result<Long> getAllSongsCount(@RequestParam(required = false) String style) {
-        return songService.getAllSongsCount(style);
+        Long count = songService.getAllSongsCount(style);
+        return Result.success(count);
     }
 
     /**
@@ -287,7 +304,8 @@ public class AdminController {
      */
     @GetMapping("/getAllArtistNames")
     public Result<List<ArtistNameVO>> getAllArtistNames() {
-        return artistService.getAllArtistNames();
+        List<ArtistNameVO> artistNames = artistService.getAllArtistNames();
+        return Result.success(artistNames);
     }
 
     /**
@@ -298,7 +316,8 @@ public class AdminController {
      */
     @PostMapping("/getAllSongsByArtist")
     public Result<PageResult<SongAdminVO>> getAllSongsByArtist(@RequestBody SongAndArtistDTO songDTO) {
-        return songService.getAllSongsByArtist(songDTO);
+        PageResult<SongAdminVO> pageResult = songService.getAllSongsByArtist(songDTO);
+        return Result.success(pageResult);
     }
 
     /**
@@ -309,7 +328,8 @@ public class AdminController {
      */
     @PostMapping("/addSong")
     public Result addSong(@RequestBody SongAddDTO songAddDTO) {
-        return songService.addSong(songAddDTO);
+        songService.addSong(songAddDTO);
+        return Result.success();
     }
 
     /**
@@ -320,7 +340,8 @@ public class AdminController {
      */
     @PutMapping("/updateSong")
     public Result UpdateSong(@RequestBody SongUpdateDTO songUpdateDTO) {
-        return songService.updateSong(songUpdateDTO);
+        songService.updateSong(songUpdateDTO);
+        return Result.success();
     }
 
     /**
@@ -333,7 +354,8 @@ public class AdminController {
     @PatchMapping("/updateSongCover/{id}")
     public Result updateSongCover(@PathVariable("id") Long songId, @RequestParam("cover") MultipartFile cover) {
         String coverUrl = minioService.uploadFile(cover, "songCovers");  // 上传到 songCovers 目录
-        return songService.updateSongCover(songId, coverUrl);
+        songService.updateSongCover(songId, coverUrl);
+        return Result.success();
     }
 
     /**
@@ -346,7 +368,8 @@ public class AdminController {
     @PatchMapping("/updateSongAudio/{id}")
     public Result updateSongAudio(@PathVariable("id") Long songId, @RequestParam("audio") MultipartFile audio, @RequestParam("duration") String duration) {
         String audioUrl = minioService.uploadFile(audio, "songs");  // 上传到 songs 目录
-        return songService.updateSongAudio(songId, audioUrl, duration);
+        songService.updateSongAudio(songId, audioUrl, duration);
+        return Result.success();
     }
 
     /**
@@ -357,7 +380,8 @@ public class AdminController {
      */
     @DeleteMapping("/deleteSong/{id}")
     public Result deleteSong(@PathVariable("id") Long songId) {
-        return songService.deleteSong(songId);
+        songService.deleteSong(songId);
+        return Result.success();
     }
 
     /**
@@ -368,7 +392,8 @@ public class AdminController {
      */
     @DeleteMapping("/deleteSongs")
     public Result deleteSongs(@RequestBody List<Long> songIds) {
-        return songService.deleteSongs(songIds);
+        songService.deleteSongs(songIds);
+        return Result.success();
     }
 
     //**********************************************************************************************/

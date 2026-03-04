@@ -2,6 +2,7 @@ package org.amis.vibemusicserver.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.amis.vibemusicserver.constant.MessageConstant;
+import org.amis.vibemusicserver.exception.BusinessException;
 import org.amis.vibemusicserver.result.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -76,10 +77,22 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 处理业务异常
+     *
+     * @param ex 业务异常
+     * @return 错误结果
+     */
+    @ExceptionHandler(BusinessException.class)
+    public Result handleBusinessException(BusinessException ex) {
+        log.error("业务异常：{}", ex.getMessage(), ex);
+        return new Result(ex.getCode(), ex.getMessage(), null);
+    }
+
+    /**
      * 处理其他未知异常
      *
-     * @param ex
-     * @return
+     * @param ex 异常
+     * @return 错误结果
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

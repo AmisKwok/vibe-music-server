@@ -1,6 +1,7 @@
 package org.amis.vibemusicserver.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.amis.vibemusicserver.constant.MessageConstant;
 import org.amis.vibemusicserver.model.dto.SongDTO;
 import org.amis.vibemusicserver.model.vo.SongDetailVO;
 import org.amis.vibemusicserver.model.vo.SongVO;
@@ -33,8 +34,11 @@ public class SongController {
      */
     @PostMapping("/getAllSongs")
     public Result<PageResult<SongVO>> getAllSongs(@RequestBody SongDTO songDTO, HttpServletRequest request) {
-        return songService.getAllSongs(songDTO, request);
-
+        PageResult<SongVO> pageResult = songService.getAllSongs(songDTO, request);
+        if (pageResult.getTotal() == 0) {
+            return Result.success(MessageConstant.DATA_NOT_FOUND, pageResult);
+        }
+        return Result.success(pageResult);
     }
 
     /**
@@ -46,7 +50,8 @@ public class SongController {
      */
     @GetMapping("/getRecommendedSongs")
     public Result<List<SongVO>> getRecommendedSongs(HttpServletRequest request) {
-        return songService.getRecommendedSongs(request);
+        List<SongVO> songList = songService.getRecommendedSongs(request);
+        return Result.success(songList);
     }
 
     /**
@@ -57,7 +62,8 @@ public class SongController {
      */
     @GetMapping("/getSongDetail/{id}")
     public Result<SongDetailVO> getSongDetail(@PathVariable("id") Long songId, HttpServletRequest request) {
-        return songService.getSongDetail(songId, request);
+        SongDetailVO songDetailVO = songService.getSongDetail(songId, request);
+        return Result.success(songDetailVO);
     }
 }
 

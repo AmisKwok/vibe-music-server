@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author : KwokChichung
- * @description :
+ * @description : 用户控制器类，负责处理用户相关的请求
  * @createDate : 2026/1/4 18:23
  */
 
@@ -48,7 +48,8 @@ public class UserController {
     )
     @GetMapping("/sendVerificationCode")
     public Result sendVerificationCode(@RequestParam @Email String email) {
-        return userService.sendVerificationCode(email);
+        userService.sendVerificationCode(email);
+        return Result.success();
     }
 
     /**
@@ -90,7 +91,8 @@ public class UserController {
         if (!isCodeValid) {
             return Result.error(MessageConstant.VERIFICATION_CODE + MessageConstant.INVALID);
         }
-        return Result.success(userService.register(userRegisterDTO));
+        userService.register(userRegisterDTO);
+        return Result.success();
     }
 
     /**
@@ -101,12 +103,13 @@ public class UserController {
      * @return 结果
      */
     @PostMapping("/login")
-    public Result login(@RequestBody @Valid UserLoginDTO userLoginDTO, BindingResult bindingResult) {
+    public Result<TokenDTO> login(@RequestBody @Valid UserLoginDTO userLoginDTO, BindingResult bindingResult) {
         String errorMessage = BindingResultUtil.handleBindingResultErrors(bindingResult);
         if (bindingResult.hasErrors()) {
             return Result.error(errorMessage);
         }
-        return userService.login(userLoginDTO);
+        TokenDTO tokenDTO = userService.login(userLoginDTO);
+        return Result.success(tokenDTO);
     }
 
     /**
@@ -117,7 +120,8 @@ public class UserController {
      */
     @RequestMapping("/logout")
     public Result logout(@RequestHeader("Authorization") String token) {
-        return userService.logout(token);
+        userService.logout(token);
+        return Result.success();
     }
 
     /**
@@ -136,7 +140,8 @@ public class UserController {
             return Result.error(errorMessage);
         }
         // 调用服务层更新密码
-        return userService.updateUserPassword(userPasswordDTO, token);
+        userService.updateUserPassword(userPasswordDTO, token);
+        return Result.success();
     }
 
     /**
@@ -162,7 +167,8 @@ public class UserController {
         }
 
         // 调用服务层重置用户密码
-        return userService.resetUserPassword(userResetPasswordDTO);
+        userService.resetUserPassword(userResetPasswordDTO);
+        return Result.success();
     }
 
     /**
@@ -172,7 +178,8 @@ public class UserController {
      */
     @GetMapping("/getUserInfo")
     public Result<UserVO> getUserInfo() {
-        return userService.userInfo();
+        UserVO userVO = userService.userInfo();
+        return Result.success(userVO);
     }
 
     /**
@@ -190,7 +197,8 @@ public class UserController {
             return Result.error(errorMessage);
         }
         // 调用服务层更新用户信息
-        return userService.updateUserInfo(userDTO);
+        userService.updateUserInfo(userDTO);
+        return Result.success();
     }
 
     /**
@@ -202,7 +210,8 @@ public class UserController {
     @PatchMapping("/updateUserAvatar")
     public Result updateUserAvatar(@RequestParam("avatar") MultipartFile avatar) {
         String userAvatar = minioService.uploadFile(avatar, "userAvatar");
-        return userService.updateUserAvatar(userAvatar);
+        userService.updateUserAvatar(userAvatar);
+        return Result.success();
     }
 
     /**
@@ -212,7 +221,8 @@ public class UserController {
      */
     @DeleteMapping("/deleteAccount")
     public Result deleteAccount() {
-        return userService.deleteAccount();
+        userService.deleteAccount();
+        return Result.success();
     }
 }
 

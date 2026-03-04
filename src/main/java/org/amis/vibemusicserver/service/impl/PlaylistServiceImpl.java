@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import org.amis.vibemusicserver.constant.MessageConstant;
+import org.amis.vibemusicserver.exception.BusinessException;
 import org.amis.vibemusicserver.mapper.PlaylistMapper;
 import org.amis.vibemusicserver.model.dto.PlaylistAddDTO;
 import org.amis.vibemusicserver.model.dto.PlaylistDTO;
@@ -15,7 +16,6 @@ import org.amis.vibemusicserver.model.entity.Playlist;
 import org.amis.vibemusicserver.model.vo.PlaylistDetailVO;
 import org.amis.vibemusicserver.model.vo.PlaylistVO;
 import org.amis.vibemusicserver.result.PageResult;
-import org.amis.vibemusicserver.result.Result;
 import org.amis.vibemusicserver.service.IPlaylistService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +23,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,12 +44,13 @@ public class PlaylistServiceImpl extends ServiceImpl<PlaylistMapper, Playlist> i
 
     /**
      * 获取所有歌单
+     *
      * @param playlistDTO 歌单查询条件封装类
-     * @return Result<PageResult<PlaylistVO>> 分页查询结果封装类
+     * @return 分页查询结果
      */
     @Override
     @Cacheable(key = "#playlistDTO.pageNum + '-' + #playlistDTO.pageSize + '-' + #playlistDTO.title + '-' + #playlistDTO.style")
-    public Result<PageResult<PlaylistVO>> getAllPlaylists(PlaylistDTO playlistDTO) {
+    public PageResult<PlaylistVO> getAllPlaylists(PlaylistDTO playlistDTO) {
         // 创建分页对象
         Page<Playlist> page = new Page<>(playlistDTO.getPageNum(), playlistDTO.getPageSize());
         QueryWrapper<Playlist> playlistQueryWrapper = new QueryWrapper<>();
@@ -65,7 +67,7 @@ public class PlaylistServiceImpl extends ServiceImpl<PlaylistMapper, Playlist> i
         IPage<Playlist> playlistPage = playlistMapper.selectPage(page, playlistQueryWrapper);
         // 处理查询结果为空的情况
         if (playlistPage.getRecords().isEmpty()) {
-            return Result.success(MessageConstant.DATA_NOT_FOUND, new PageResult<>(0L, null));
+            return new PageResult<>(0L, Collections.emptyList());
         }
 
         // 将实体对象转换为VO对象
@@ -77,52 +79,52 @@ public class PlaylistServiceImpl extends ServiceImpl<PlaylistMapper, Playlist> i
                 }).toList();
 
         // 返回分页结果
-        return Result.success(new PageResult<>(playlistPage.getTotal(), playlistVOList));
+        return new PageResult<>(playlistPage.getTotal(), playlistVOList);
     }
 
     @Override
-    public Result<PageResult<Playlist>> getAllPlaylistsInfo(PlaylistDTO playlistDTO) {
+    public PageResult<Playlist> getAllPlaylistsInfo(PlaylistDTO playlistDTO) {
         return null;
     }
 
     @Override
-    public Result<List<PlaylistVO>> getRecommendedPlaylists(HttpServletRequest request) {
+    public List<PlaylistVO> getRecommendedPlaylists(HttpServletRequest request) {
         return null;
     }
 
     @Override
-    public Result<PlaylistDetailVO> getPlaylistDetail(Long playlistId, HttpServletRequest request) {
+    public PlaylistDetailVO getPlaylistDetail(Long playlistId, HttpServletRequest request) {
         return null;
     }
 
     @Override
-    public Result<Long> getAllPlaylistsCount(String style) {
+    public Long getAllPlaylistsCount(String style) {
         return null;
     }
 
     @Override
-    public Result addPlaylist(PlaylistAddDTO playlistAddDTO) {
-        return null;
+    public void addPlaylist(PlaylistAddDTO playlistAddDTO) {
+        return;
     }
 
     @Override
-    public Result updatePlaylist(PlaylistUpdateDTO playlistUpdateDTO) {
-        return null;
+    public void updatePlaylist(PlaylistUpdateDTO playlistUpdateDTO) {
+        return;
     }
 
     @Override
-    public Result updatePlaylistCover(Long playlistId, String coverUrl) {
-        return null;
+    public void updatePlaylistCover(Long playlistId, String coverUrl) {
+        return;
     }
 
     @Override
-    public Result deletePlaylist(Long playlistId) {
-        return null;
+    public void deletePlaylist(Long playlistId) {
+        return;
     }
 
     @Override
-    public Result deletePlaylists(List<Long> playlistIds) {
-        return null;
+    public void deletePlaylists(List<Long> playlistIds) {
+        return;
     }
 }
 

@@ -2,8 +2,13 @@ package org.amis.vibemusicserver.service;
 
 import org.amis.vibemusicserver.model.dto.TokenDTO;
 import org.amis.vibemusicserver.model.dto.TokenRefreshDTO;
-import org.amis.vibemusicserver.result.Result;
 
 public interface TokenService {
-    Result<TokenDTO> generateRefreshToken(TokenRefreshDTO refreshDTO);
+    /**
+     * 生成刷新Token
+     *
+     * @param refreshDTO 刷新Token请求
+     * @return TokenDTO
+     */
+    TokenDTO generateRefreshToken(TokenRefreshDTO refreshDTO);
 }

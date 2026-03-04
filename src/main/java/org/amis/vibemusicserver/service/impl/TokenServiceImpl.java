@@ -2,9 +2,9 @@ package org.amis.vibemusicserver.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.amis.vibemusicserver.constant.MessageConstant;
+import org.amis.vibemusicserver.exception.BusinessException;
 import org.amis.vibemusicserver.model.dto.TokenDTO;
 import org.amis.vibemusicserver.model.dto.TokenRefreshDTO;
-import org.amis.vibemusicserver.result.Result;
 import org.amis.vibemusicserver.service.TokenService;
 import org.amis.vibemusicserver.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author : KwokChichung
- * @description :
+ * @description : Token服务实现类，负责处理Token刷新相关的业务逻辑
  * @createDate : 2026/1/9 23:21
  */
 @Slf4j
@@ -26,13 +26,14 @@ public class TokenServiceImpl implements TokenService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
     @Override
-    public Result<TokenDTO> generateRefreshToken(TokenRefreshDTO refreshDTO) {
+    public TokenDTO generateRefreshToken(TokenRefreshDTO refreshDTO) {
         String refreshToken = refreshDTO.getRefreshToken();
 
         // 验证refresh_token有效性
         if (!JwtUtil.isRefreshToken(refreshToken)) {
-            throw new RuntimeException(MessageConstant.TOKEN + MessageConstant.INVALID);
+            throw new BusinessException(MessageConstant.TOKEN + MessageConstant.INVALID);
         }
 
         // 解析用户信息
@@ -66,6 +67,6 @@ public class TokenServiceImpl implements TokenService {
         // 从refreshToken解析实际过期时间
         tokenDTO.setRefreshTokenExpireTime(JwtUtil.getExpirationFromToken(refreshToken));
 
-        return Result.success(tokenDTO);
+        return tokenDTO;
     }
 }

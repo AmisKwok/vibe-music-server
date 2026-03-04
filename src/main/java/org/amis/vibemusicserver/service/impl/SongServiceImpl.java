@@ -9,7 +9,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.amis.vibemusicserver.constant.JwtClaimsConstant;
 import org.amis.vibemusicserver.constant.MessageConstant;
 import org.amis.vibemusicserver.enumeration.LikeStatusEnum;
+import org.amis.vibemusicserver.enumeration.ResultCodeEnum;
 import org.amis.vibemusicserver.enumeration.RoleEnum;
+import org.amis.vibemusicserver.exception.BusinessException;
 import org.amis.vibemusicserver.mapper.GenreMapper;
 import org.amis.vibemusicserver.mapper.SongMapper;
 import org.amis.vibemusicserver.mapper.StyleMapper;
@@ -26,7 +28,6 @@ import org.amis.vibemusicserver.model.vo.SongAdminVO;
 import org.amis.vibemusicserver.model.vo.SongDetailVO;
 import org.amis.vibemusicserver.model.vo.SongVO;
 import org.amis.vibemusicserver.result.PageResult;
-import org.amis.vibemusicserver.result.Result;
 import org.amis.vibemusicserver.service.ISongService;
 import org.amis.vibemusicserver.service.MinioService;
 import org.amis.vibemusicserver.utils.JwtUtil;
@@ -75,46 +76,40 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements IS
      * 获取所有歌曲
      *
      * @param songDTO songDTO
+     * @param request HTTP请求对象
      * @return 歌曲列表
      */
     @Override
     @Cacheable(key = "#songDTO.pageNum.toString() + '-' + #songDTO.pageSize.toString() + '-' + #songDTO.songName + '-' + #songDTO.artistName + '-' + #songDTO.album")
-    public Result<PageResult<SongVO>> getAllSongs(SongDTO songDTO, HttpServletRequest request) {
-        // 从请求头中获取token
+    public PageResult<SongVO> getAllSongs(SongDTO songDTO, HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
 
-        // 解析token获取用户信息
         Map<String, Object> map = null;
         if (token != null && !token.isEmpty()) {
             map = JwtUtil.parseToken(token);
         }
 
-        // 分页查询歌曲，并附带歌手信息
         Page<SongVO> page = new Page<>(songDTO.getPageNum(), songDTO.getPageSize());
         IPage<SongVO> songPage = songMapper.getSongsWithArtist(page, songDTO.getSongName(), songDTO.getArtistName(), songDTO.getAlbum());
         if (songPage.getRecords().isEmpty()) {
-            return Result.success(MessageConstant.DATA_NOT_FOUND, new PageResult<>(0L, null));
+            return new PageResult<>(0L, null);
         }
 
-        // 设置默认的点赞状态为未点赞
         List<SongVO> songVOList = songPage.getRecords()
                 .stream()
-                .peek(songVO -> songVO.setLikeStatus(LikeStatusEnum.DEFAULT.getCode())) //默认状态为：0
+                .peek(songVO -> songVO.setLikeStatus(LikeStatusEnum.DEFAULT.getCode()))
                 .toList();
 
-        // 如果用户已登录，处理个性化点赞状态
         if (map != null) {
             String role = (String) map.get(JwtClaimsConstant.ROLE);
 
-            // 只处理普通用户的点赞状态
             if (role.equals(RoleEnum.USER.getRole())) {
                 Object userIdObj = map.get(JwtClaimsConstant.USER_ID);
                 Long userId = TypeConversionUtil.toLong(userIdObj);
 
-                // 获取用户收藏的音乐
                 List<UserFavorite> favoriteSongs = userFavoriteMapper.selectList(new QueryWrapper<UserFavorite>()
                         .eq("user_id", userId)
                         .eq("type", 0));
@@ -123,15 +118,14 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements IS
                         .map(UserFavorite::getSongId)
                         .collect(Collectors.toSet());
 
-                // 更新歌曲列表，标记用户喜欢的音乐
                 for (SongVO songVO : songVOList) {
                     if (favoriteSongIds.contains(songVO.getSongId())) {
-                        songVO.setLikeStatus(LikeStatusEnum.LIKE.getCode()); // 用户喜欢的音乐标记为：1
+                        songVO.setLikeStatus(LikeStatusEnum.LIKE.getCode());
                     }
                 }
             }
         }
-        return Result.success(new PageResult<>(page.getTotal(), songVOList));
+        return new PageResult<>(page.getTotal(), songVOList);
     }
 
     /**
@@ -142,16 +136,15 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements IS
      */
     @Override
     @Cacheable(key = "#songAndArtistDTO.pageNum.toString() + '-' + #songAndArtistDTO.pageSize.toString() + '-' + #songAndArtistDTO.songName + '-' + #songAndArtistDTO.album + '-' + #songAndArtistDTO.artistId.toString()")
-    public Result<PageResult<SongAdminVO>> getAllSongsByArtist(SongAndArtistDTO songAndArtistDTO) {
-        // 分页查询
+    public PageResult<SongAdminVO> getAllSongsByArtist(SongAndArtistDTO songAndArtistDTO) {
         Page<SongAdminVO> page = new Page<>(songAndArtistDTO.getPageNum(), songAndArtistDTO.getPageSize());
         IPage<SongAdminVO> songPage = songMapper.getSongsWithArtistName(page, songAndArtistDTO.getArtistId(), songAndArtistDTO.getSongName(), songAndArtistDTO.getAlbum());
 
         if (songPage.getRecords().isEmpty()) {
-            return Result.success(MessageConstant.DATA_NOT_FOUND, new PageResult<>(0L, null));
+            return new PageResult<>(0L, null);
         }
 
-        return Result.success(new PageResult<>(songPage.getTotal(), songPage.getRecords()));
+        return new PageResult<>(songPage.getTotal(), songPage.getRecords());
     }
 
 
@@ -163,60 +156,49 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements IS
      * @return 推荐歌曲列表
      */
     @Override
-    public Result<List<SongVO>> getRecommendedSongs(HttpServletRequest request) {
-        // 从请求头中获取token
+    public List<SongVO> getRecommendedSongs(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
 
-        // 解析token获取用户信息
         Map<String, Object> map = null;
         if (token != null && !token.isEmpty()) {
             map = JwtUtil.parseToken(token);
         }
 
-        // 如果用户未登录，直接返回随机推荐歌曲
         if (map == null) {
-            return Result.success(songMapper.getRandomSongsWithArtist());
+            return songMapper.getRandomSongsWithArtist();
         }
 
-        // 获取用户 ID
         Long userId = TypeConversionUtil.toLong(map.get(JwtClaimsConstant.USER_ID));
 
-        // 查询用户收藏的歌曲 ID
         List<Long> favoriteSongIds = userFavoriteMapper.getFavoriteSongIdsByUserId(userId);
         if (favoriteSongIds.isEmpty()) {
-            return Result.success(songMapper.getRandomSongsWithArtist());
+            return songMapper.getRandomSongsWithArtist();
         }
 
-        // 获取用户喜欢的歌曲的风格id，并统计每个风格的出现次数
         List<Long> favoriteSongStylesId = songMapper.getFavoriteSongStyles(favoriteSongIds);
         Map<Long, Long> styleFrequency = favoriteSongStylesId.stream()
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
-        // 根据风格的出现次数进行排序，并获取前20个最受欢迎的风格id
         List<Long> sortedStyleId = styleFrequency.entrySet().stream()
                 .sorted((a, b) -> Long.compare(b.getValue(), a.getValue()))
                 .map(Map.Entry::getKey)
                 .toList();
 
-        // 从Redis获取缓存的推荐歌曲
         String redisKey = "recommended_songs_" + userId;
         List<SongVO> cachedSongs = redisTemplate.opsForList().range(redisKey, 0, -1);
 
-        // 如果没有缓存，从数据库获取推荐歌曲并缓存
         if (cachedSongs == null || cachedSongs.isEmpty()) {
             cachedSongs = songMapper.getRecommendedSongsByStyles(sortedStyleId, favoriteSongIds, 80);
             redisTemplate.opsForList().rightPushAll(redisKey, cachedSongs);
             redisTemplate.expire(redisKey, 30, TimeUnit.MINUTES);
         }
 
-        // 随机打乱缓存歌曲，取前20首
         Collections.shuffle(cachedSongs);
         List<SongVO> recommendedSongs = cachedSongs.subList(0, Math.min(20, cachedSongs.size()));
 
-        // 如果推荐歌曲不足20首，补充随机歌曲
         if (recommendedSongs.size() < 20) {
             List<SongVO> randomSongs = songMapper.getRandomSongsWithArtist();
             Set<Long> addSongIds = recommendedSongs.stream()
@@ -232,7 +214,7 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements IS
                 }
             }
         }
-        return Result.success(recommendedSongs);
+        return recommendedSongs;
     }
 
 
@@ -245,45 +227,36 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements IS
      */
     @Override
     @Cacheable(key = "#songId")
-    public Result<SongDetailVO> getSongDetail(Long songId, HttpServletRequest request) {
-        // 根据歌曲ID获取歌曲详情
+    public SongDetailVO getSongDetail(Long songId, HttpServletRequest request) {
         SongDetailVO songDetailVO = songMapper.getSongDetailById(songId);
 
-        // 获取请求头中的 token
         String token = request.getHeader("Authorization");
         if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);  // 去掉 "Bearer " 前缀
+            token = token.substring(7);
         }
 
-        // 解析JWT token获取用户信息
         Map<String, Object> map = null;
         if (token != null && !token.isEmpty()) {
             map = JwtUtil.parseToken(token);
         }
 
-        // 如果 token 解析成功且用户为登录状态，进一步操作
         if (map != null) {
-            // 获取用户角色
             String role = (String) map.get(JwtClaimsConstant.ROLE);
-            // 只处理普通用户的点赞状态
             if (role.equals(RoleEnum.USER.getRole())) {
-                // 转换用户ID
                 Object userIdObj = map.get(JwtClaimsConstant.USER_ID);
                 Long userId = TypeConversionUtil.toLong(userIdObj);
 
-                // 查询用户是否收藏了该歌曲
                 UserFavorite favoriteSong = userFavoriteMapper.selectOne(new QueryWrapper<UserFavorite>()
                         .eq("user_id", userId)
                         .eq("type", 0)
                         .eq("song_id", songId));
-                // 如果已收藏，设置点赞状态
                 if (favoriteSong != null) {
                     songDetailVO.setLikeStatus(LikeStatusEnum.LIKE.getCode());
                 }
             }
         }
 
-        return Result.success(songDetailVO);
+        return songDetailVO;
     }
 
     /**
@@ -293,32 +266,29 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements IS
      * @return 歌曲数量
      */
     @Override
-    public Result<Long> getAllSongsCount(String style) {
+    public Long getAllSongsCount(String style) {
         QueryWrapper<Song> queryWrapper = new QueryWrapper<>();
         if (StringUtils.isNotBlank(style)) {
             queryWrapper.eq("style", style);
         }
-        return Result.success(songMapper.selectCount(queryWrapper));
+        return songMapper.selectCount(queryWrapper);
     }
 
     /**
      * 添加歌曲信息
      *
      * @param songAddDTO 歌曲信息
-     * @return 结果
      */
     @Override
     @CacheEvict(cacheNames = "songCache", allEntries = true)
-    public Result addSong(SongAddDTO songAddDTO) {
+    public void addSong(SongAddDTO songAddDTO) {
         Song song = new Song();
         BeanUtils.copyProperties(songAddDTO, song);
 
-        // 插入歌曲记录
         if (songMapper.insert(song) == 0) {
-            return Result.error(MessageConstant.ADD + MessageConstant.FAILED);
+            throw new BusinessException(MessageConstant.ADD + MessageConstant.FAILED);
         }
 
-        // 获取刚插入的歌曲记录
         Song songInDB = songMapper.selectOne(new QueryWrapper<Song>()
                 .eq("artist_id", songAddDTO.getArtistId())
                 .eq("name", songAddDTO.getSongName())
@@ -327,20 +297,17 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements IS
                 .last("LIMIT 1"));
 
         if (songInDB == null) {
-            return Result.error(MessageConstant.SONG + MessageConstant.NOT_FOUND);
+            throw new BusinessException(MessageConstant.SONG + MessageConstant.NOT_FOUND);
         }
 
         Long songId = songInDB.getSongId();
 
-        // 解析风格字段（多个风格以逗号分隔）
         String styleStr = songAddDTO.getStyle();
         if (styleStr != null && !styleStr.isEmpty()) {
             List<String> styles = Arrays.asList(styleStr.split(","));
 
-            // 查询风格 ID
             List<Style> styleList = styleMapper.selectList(new QueryWrapper<Style>().in("name", styles));
 
-            // 插入到 tb_genre
             for (Style style : styleList) {
                 Genre genre = new Genre();
                 genre.setSongId(songId);
@@ -348,46 +315,37 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements IS
                 genreMapper.insert(genre);
             }
         }
-
-        return Result.success(MessageConstant.ADD + MessageConstant.SUCCESS);
     }
 
     /**
      * 更新歌曲信息
      *
      * @param songUpdateDTO 歌曲信息
-     * @return 结果
      */
     @Override
     @CacheEvict(cacheNames = "songCache", allEntries = true)
-    public Result updateSong(SongUpdateDTO songUpdateDTO) {
-        // 查询数据库中是否存在该歌曲
+    public void updateSong(SongUpdateDTO songUpdateDTO) {
         Song songInDB = songMapper.selectById(songUpdateDTO.getSongId());
         if (songInDB == null) {
-            return Result.error(MessageConstant.SONG + MessageConstant.NOT_FOUND);
+            throw new BusinessException(MessageConstant.SONG + MessageConstant.NOT_FOUND);
         }
 
-        // 更新歌曲基本信息
         Song song = new Song();
         BeanUtils.copyProperties(songUpdateDTO, song);
         if (songMapper.updateById(song) == 0) {
-            return Result.error(MessageConstant.UPDATE + MessageConstant.FAILED);
+            throw new BusinessException(MessageConstant.UPDATE + MessageConstant.FAILED);
         }
 
         Long songId = songUpdateDTO.getSongId();
 
-        // 删除 tb_genre 中该歌曲的原有风格映射
         genreMapper.delete(new QueryWrapper<Genre>().eq("song_id", songId));
 
-        // 解析新的风格字段（多个风格以逗号分隔）
         String styleStr = songUpdateDTO.getStyle();
         if (styleStr != null && !styleStr.isEmpty()) {
             List<String> styles = Arrays.asList(styleStr.split(","));
 
-            // 查询风格 ID
             List<Style> styleList = styleMapper.selectList(new QueryWrapper<Style>().in("name", styles));
 
-            // 插入新的风格映射到 tb_genre
             for (Style style : styleList) {
                 Genre genre = new Genre();
                 genre.setSongId(songId);
@@ -395,8 +353,6 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements IS
                 genreMapper.insert(genre);
             }
         }
-
-        return Result.success(MessageConstant.UPDATE + MessageConstant.SUCCESS);
     }
 
     /**
@@ -404,11 +360,10 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements IS
      *
      * @param songId   歌曲id
      * @param coverUrl 封面url
-     * @return 更新结果
      */
     @Override
     @CacheEvict(cacheNames = "songCache", allEntries = true)
-    public Result updateSongCover(Long songId, String coverUrl) {
+    public void updateSongCover(Long songId, String coverUrl) {
         Song song = songMapper.selectById(songId);
         String cover = song.getCoverUrl();
         if (cover != null && !cover.isEmpty()) {
@@ -417,10 +372,8 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements IS
 
         song.setCoverUrl(coverUrl);
         if (songMapper.updateById(song) == 0) {
-            return Result.error(MessageConstant.UPDATE + MessageConstant.FAILED);
+            throw new BusinessException(MessageConstant.UPDATE + MessageConstant.FAILED);
         }
-
-        return Result.success(MessageConstant.UPDATE + MessageConstant.SUCCESS);
     }
 
     /**
@@ -428,11 +381,11 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements IS
      *
      * @param songId   歌曲id
      * @param audioUrl 音频url
-     * @return 更新结果
+     * @param duration 音频时长
      */
     @Override
     @CacheEvict(cacheNames = "songCache", allEntries = true)
-    public Result updateSongAudio(Long songId, String audioUrl, String duration) {
+    public void updateSongAudio(Long songId, String audioUrl, String duration) {
         Song song = songMapper.selectById(songId);
         String audio = song.getAudioUrl();
         if (audio != null && !audio.isEmpty()) {
@@ -441,24 +394,21 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements IS
 
         song.setAudioUrl(audioUrl).setDuration(duration);
         if (songMapper.updateById(song) == 0) {
-            return Result.error(MessageConstant.UPDATE + MessageConstant.FAILED);
+            throw new BusinessException(MessageConstant.UPDATE + MessageConstant.FAILED);
         }
-
-        return Result.success(MessageConstant.UPDATE + MessageConstant.SUCCESS);
     }
 
     /**
      * 删除歌曲
      *
      * @param songId 歌曲id
-     * @return 删除结果
      */
     @Override
     @CacheEvict(cacheNames = "songCache", allEntries = true)
-    public Result deleteSong(Long songId) {
+    public void deleteSong(Long songId) {
         Song song = songMapper.selectById(songId);
         if (song == null) {
-            return Result.error(MessageConstant.SONG + MessageConstant.NOT_FOUND);
+            throw new BusinessException(MessageConstant.SONG + MessageConstant.NOT_FOUND);
         }
         String cover = song.getCoverUrl();
         String audio = song.getAudioUrl();
@@ -471,22 +421,18 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements IS
         }
 
         if (songMapper.deleteById(songId) == 0) {
-            return Result.error(MessageConstant.DELETE + MessageConstant.FAILED);
+            throw new BusinessException(MessageConstant.DELETE + MessageConstant.FAILED);
         }
-
-        return Result.success(MessageConstant.DELETE + MessageConstant.SUCCESS);
     }
 
     /**
      * 批量删除歌曲
      *
      * @param songIds 歌曲id列表
-     * @return 删除结果
      */
     @Override
     @CacheEvict(cacheNames = "songCache", allEntries = true)
-    public Result deleteSongs(List<Long> songIds) {
-        // 1. 查询歌曲信息，获取歌曲封面 URL 列表
+    public void deleteSongs(List<Long> songIds) {
         List<Song> songs = songMapper.selectByIds(songIds);
         List<String> coverUrlList = songs.stream()
                 .map(Song::getCoverUrl)
@@ -497,7 +443,6 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements IS
                 .filter(audioUrl -> audioUrl != null && !audioUrl.isEmpty())
                 .toList();
 
-        // 2. 先删除 MinIO 里的歌曲封面和音频文件
         for (String coverUrl : coverUrlList) {
             minioService.deleteFile(coverUrl);
         }
@@ -505,13 +450,9 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements IS
             minioService.deleteFile(audioUrl);
         }
 
-        // 3. 删除数据库中的歌曲信息
         if (songMapper.deleteByIds(songIds) == 0) {
-            return Result.error(MessageConstant.DELETE + MessageConstant.FAILED);
+            throw new BusinessException(MessageConstant.DELETE + MessageConstant.FAILED);
         }
-
-        return Result.success(MessageConstant.DELETE + MessageConstant.SUCCESS);
     }
 
 }
-
