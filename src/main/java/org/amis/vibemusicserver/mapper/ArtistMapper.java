@@ -5,8 +5,6 @@ import org.amis.vibemusicserver.model.entity.Artist;
 import org.amis.vibemusicserver.model.vo.ArtistDetailVO;
 import org.apache.ibatis.annotations.Mapper;
 
-import java.util.List;
-
 /**
  * @author : KwokChichung
  * @description : 歌手 Mapper 接口

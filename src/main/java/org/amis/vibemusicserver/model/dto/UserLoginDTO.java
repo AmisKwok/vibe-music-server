@@ -2,7 +2,6 @@ package org.amis.vibemusicserver.model.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import org.amis.vibemusicserver.constant.MessageConstant;
 

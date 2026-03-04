@@ -5,12 +5,11 @@ import org.amis.vibemusicserver.constant.MessageConstant;
 import org.amis.vibemusicserver.exception.BusinessException;
 import org.amis.vibemusicserver.result.Result;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import org.springframework.util.StringUtils;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.regex.Matcher;

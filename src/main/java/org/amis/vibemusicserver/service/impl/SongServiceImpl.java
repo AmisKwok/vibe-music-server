@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.amis.vibemusicserver.constant.JwtClaimsConstant;
 import org.amis.vibemusicserver.constant.MessageConstant;
 import org.amis.vibemusicserver.enumeration.LikeStatusEnum;
-import org.amis.vibemusicserver.enumeration.ResultCodeEnum;
 import org.amis.vibemusicserver.enumeration.RoleEnum;
 import org.amis.vibemusicserver.exception.BusinessException;
 import org.amis.vibemusicserver.mapper.GenreMapper;
