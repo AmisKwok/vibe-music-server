@@ -53,7 +53,7 @@ spring:
 
 # 配置 mybatis-plus
 mybatis-plus:
-  type-aliases-package: com.amis.pojo
+  type-aliases-package: com.amis.vibemusicserver.model
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
