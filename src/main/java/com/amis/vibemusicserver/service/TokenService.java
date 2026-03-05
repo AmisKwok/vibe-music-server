@@ -1,0 +1,14 @@
+package com.amis.vibemusicserver.service;
+
+import com.amis.vibemusicserver.model.dto.TokenDTO;
+import com.amis.vibemusicserver.model.dto.TokenRefreshDTO;
+
+public interface TokenService {
+    /**
+     * 生成刷新Token
+     *
+     * @param refreshDTO 刷新Token请求
+     * @return TokenDTO
+     */
+    TokenDTO generateRefreshToken(TokenRefreshDTO refreshDTO);
+}

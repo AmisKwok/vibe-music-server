@@ -75,8 +75,8 @@
     </root>
 
     <!-- 特定包日志级别配置 -->
-    <logger name="org.amis.vibemusicserver.utils" level="ERROR" />
-    <logger name="org.amis.vibemusicserver.service.impl.DeviceInfoServiceImpl" level="DEBUG" />
+    <logger name="com.amis.vibemusicserver.utils" level="ERROR" />
+    <logger name="com.amis.vibemusicserver.service.impl.DeviceInfoServiceImpl" level="DEBUG" />
 
     <!-- Spring框架相关日志配置 -->
     <logger name="org.springframework" level="INFO" />

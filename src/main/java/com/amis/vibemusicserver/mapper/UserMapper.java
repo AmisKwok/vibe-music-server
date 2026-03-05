@@ -1,0 +1,14 @@
+package com.amis.vibemusicserver.mapper;
+
+import com.amis.vibemusicserver.model.entity.User;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
+
+/**
+ * @author : KwokChichung
+ * @description : Mapper 接口
+ * @createDate : 2026/1/5 01:12
+ */
+@Mapper
+public interface UserMapper extends BaseMapper<User> {
+}

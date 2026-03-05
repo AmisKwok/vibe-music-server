@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.amis.vibemusicserver.mapper.UserFavoriteMapper">
+<mapper namespace="com.amis.vibemusicserver.mapper.UserFavoriteMapper">
 
     <!-- 查询用户收藏的所有歌曲ID -->
     <select id="getUserFavoriteSongIds" resultType="java.lang.Long">

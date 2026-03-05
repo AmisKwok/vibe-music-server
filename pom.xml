@@ -8,7 +8,7 @@
         <version>3.5.10-SNAPSHOT</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>org.amis</groupId>
+    <groupId>com.amis</groupId>
     <artifactId>vibe-music-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>vibe-music-server</name>

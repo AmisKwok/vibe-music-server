@@ -1,0 +1,10 @@
+package com.amis.vibemusicserver.model.entity;
+
+/**
+ * @author : KwokChichung
+ * @description :
+ * @createDate : 2026/1/3 22:48
+ */
+public class Feedback {
+}
+
