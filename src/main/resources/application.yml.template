@@ -1,3 +1,7 @@
+# 应用版本（由Maven自动注入）
+app:
+  version: @project.version@
+
 spring:
   # 配置数据源
   datasource:

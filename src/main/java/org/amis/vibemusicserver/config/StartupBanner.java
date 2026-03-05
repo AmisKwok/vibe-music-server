@@ -1,6 +1,7 @@
 package org.amis.vibemusicserver.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.SpringBootVersion;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -26,9 +27,10 @@ public class StartupBanner implements ApplicationListener<ApplicationReadyEvent>
                 "    \\  $/   | $$| $$$$$$$/|  $$$$$$$      | $$ \\/  | $$|  $$$$$$/ /$$$$$$$/| $$|  $$$$$$$ \n" +
                 "     \\_/    |__/|_______/  \\_______/      |__/     |__/ \\______/ |_______/ |__/ \\_______/ \n" +
                 "\n" +
-                "  :: Spring Boot ::  (v" + event.getApplicationContext().getEnvironment().getProperty("spring-boot.version") + ")\n" +
+                "  :: Spring Boot ::  (v" + SpringBootVersion.getVersion() + ")\n" +
+                "  :: App Version   ::  (v" + event.getApplicationContext().getEnvironment().getProperty("app.version") + ")\n" +
                 "  :: Application Started Successfully ::\n\n";
-        
+
         log.info(banner);
     }
 }
