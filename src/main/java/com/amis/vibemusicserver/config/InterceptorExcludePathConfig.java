@@ -23,7 +23,7 @@ public class InterceptorExcludePathConfig {
 
                 // 用户认证相关
                 "/user/login", "/user/logout", "/user/register",
-                "/user/sendVerificationCode", "/user/resetUserPassword",
+                "/user/sendVerificationCode", "/user/resetUserPassword", "/user/verifyVerificationCode",
 
                 //token
                 "/token/refresh",
@@ -58,7 +58,7 @@ public class InterceptorExcludePathConfig {
     public static List<String> getUserExcludePaths() {
         return Arrays.asList(
                 "/user/login", "/user/logout", "/user/register",
-                "/user/sendVerificationCode", "/user/resetUserPassword"
+                "/user/sendVerificationCode", "/user/resetUserPassword", "/user/verifyVerificationCode"
         );
     }
 

@@ -1,8 +1,8 @@
 package com.amis.vibemusicserver.service.impl;
 
+import com.amis.utils.RandomCodeUtil;
 import com.amis.vibemusicserver.constant.MessageConstant;
 import com.amis.vibemusicserver.service.EmailService;
-import com.amis.vibemusicserver.utils.RandomCodeUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;

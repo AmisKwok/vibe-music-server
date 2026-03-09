@@ -1,8 +1,8 @@
 package com.amis.vibemusicserver.common.oss;
 
+import com.amis.utils.FileUtils;
+import com.amis.utils.StringUtils;
 import com.amis.vibemusicserver.model.entity.UploadResult;
-import com.amis.vibemusicserver.utils.FileUtils;
-import com.amis.vibemusicserver.utils.StringUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

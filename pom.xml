@@ -32,6 +32,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <java.version>21</java.version>
         <skipTests>true</skipTests>
+        <amis-java-utils.version>1.0.1</amis-java-utils.version>
     </properties>
     <dependencies>
         <dependency>
@@ -59,6 +60,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!--AmisJavaUtils 公共工具类库-->
+        <dependency>
+            <groupId>com.github.AmisKwok</groupId>
+            <artifactId>AmisJavaUtils</artifactId>
+            <version>${amis-java-utils.version}</version>
         </dependency>
 
         <!--mybatis-plus依赖-->
@@ -205,6 +213,10 @@
             <releases>
                 <enabled>false</enabled>
             </releases>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
