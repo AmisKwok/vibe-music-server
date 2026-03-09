@@ -1,0 +1,12 @@
+oss:
+  # 支持S3协议的厂商
+  provider: MINIO
+  endpoint: 192.168.56.101:9000
+  accessKey: minio
+  secretKey: CYyeLL2xpb3GkbEM
+  bucketName: test
+  richtextBucketName: static
+  domain: http://38.76.217.93:19000
+  # 命名方式: UUID、ORIGINAL原文件名偏好，冲突会补充时间
+  naming: original
+  scheme: https
