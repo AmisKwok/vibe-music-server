@@ -24,10 +24,10 @@ public class MinioServiceImpl implements MinioService {
 
     private final MinioClient minioClient;
 
-    @Value("${minio.bucket}")
+    @Value("${oss.bucketName}")
     private String bucketName;
 
-    @Value("${minio.endpoint}")
+    @Value("${oss.endpoint}")
     private String endpoint;
 
 

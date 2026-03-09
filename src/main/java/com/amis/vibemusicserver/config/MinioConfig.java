@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @author : Debug
+ * @author : AmisKwok
  * @description : MinIO配置类
  * 配置MinIO客户端用于文件存储服务
  */
@@ -15,13 +15,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MinioConfig {
 
-    @Value("${minio.endpoint}")
+    @Value("${oss.endpoint}")
     private String endpoint;
 
-    @Value("${minio.accessKey}")
+    @Value("${oss.accessKey}")
     private String accessKey;
 
-    @Value("${minio.secretKey}")
+    @Value("${oss.secretKey}")
     private String secretKey;
 
     /**
