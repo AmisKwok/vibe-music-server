@@ -1,0 +1,24 @@
+# MyBatis-Plus 分页插件配置
+mybatis-plus:
+  global-config:
+    db-config:
+      # 逻辑删除字段名
+      logic-delete-field: isDeleted
+      # 逻辑删除值
+      logic-delete-value: 1
+      # 逻辑未删除值
+      logic-not-delete-value: 0
+  configuration:
+    # 开启sql日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 分页参数合理化
+    reasonable: true
+    # 支持方法参数上的分页参数
+    support-methods-arguments: true
+    # 分页参数默认值
+    params:
+      pageNum: pageNum
+      pageSize: pageSize
+      count: countSql
+      reasonable: reasonable
+      pageSizeZero: pageSizeZero

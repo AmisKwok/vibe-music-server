@@ -1,0 +1,23 @@
+mail:
+  # 邮件主机
+  host: smtp.your-email-provider.com
+  # 端口
+  port: 587
+  # 用户名
+  username: your-email@example.com
+  # 密码或授权码
+  password: "your-email-password"
+  # 发件人显示名称
+  from-name: "Vibe Music System"
+  # 默认编码
+  default-encoding: UTF-8
+  # 是否开启SSL
+  ssl:
+    enable: false
+  # 是否开启TLS
+  tls:
+    enable: true
+  # 协议
+  protocol: smtp
+  # 是否开启调试模式
+  debug: false
