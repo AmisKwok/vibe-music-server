@@ -1,71 +1,52 @@
-# 应用版本（由Maven自动注入）
+# 应用配置模板
 app:
-  version: @project.version@
+  version: @project.version@  # 应用版本（由Maven自动注入）
+
+server:
+  port: 9991 # 设置服务端口
 
 spring:
-  # 配置数据源
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://your-mysql-host:3306/your-database?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
-    username: your-mysql-username
-    password: "your-mysql-password"
-    type: com.alibaba.druid.pool.DruidDataSource
-
-  # Redis服务连接配置
-  data:
-    redis:
-      database: 1
-      host: your-redis-host
-      port: 6379
-      password: your-redis-password
+  threads:
+    virtual:
+      # 启用虚拟线程
+      enabled: true
+  profiles:
+    active: dev # 激活的环境配置
+  config:
+    import:
+      - file:config/${spring.profiles.active}/oss.yml
+      - file:config/${spring.profiles.active}/mysql.yml
+      - file:config/${spring.profiles.active}/page-helper.yml
+      - file:config/${spring.profiles.active}/redis.yml
+      - file:config/${spring.profiles.active}/mail.yml
 
   servlet:
     multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
+      max-file-size: 100MB # 设置最大上传文件大小
+      max-request-size: 100MB # 设置最大请求大小
 
-  # Redis缓存有效期配置
+  # Redis缓存统一有效期设置
   cache:
     redis:
-      time-to-live: 600000
+      time-to-live: 600000 # 10分钟，单位毫秒
 
-  # 配置邮件服务
-  mail:
-    host: smtp.your-email-provider.com
-    username: your-email@example.com
-    password: your-email-password
-    protocol: smtp
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
-          ssl:
-            enable: true
-          socketFactory:
-            port: 465
-            class: javax.net.ssl.SSLSocketFactory
-          connectiontimeout: 5000
-          timeout: 3000
-          writetimeout: 5000
-
-# 配置 mybatis-plus
+# MyBatis-Plus 配置
 mybatis-plus:
-  type-aliases-package: com.amis.vibemusicserver.model
+  type-aliases-package: com.amis.vibemusicserver.model # 实体类包路径
   configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # SQL日志输出
+    map-underscore-to-camel-case: true # 驼峰命名映射
+    default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
   global-config:
     db-config:
-      table-prefix: tb_
+      table-prefix: tb_  # 表名前缀
 
-# 定义角色和路径权限的映射关系
+# 角色路径权限配置
 role-path-permissions:
   permissions:
     ROLE_ADMIN:
       - "/admin/"
+      - "/token"
     ROLE_USER:
       - "/user/"
       - "/playlist/"
@@ -75,12 +56,8 @@ role-path-permissions:
       - "/comment/"
       - "/banner/"
       - "/feedback/"
-
-minio:
-  endpoint: http://your-minio-host:9000
-  accessKey: "your-minio-access-key"
-  secretKey: "your-minio-secret-key"
-  bucket: your-bucket-name
+      - "/token"
+      - "/common/"
 
 # 请求防抖配置
 request:
@@ -88,8 +65,7 @@ request:
     enabled: true  # 是否启用防抖功能
     default-expire: 60  # 默认防抖时间（秒）
 
-# RSA加密配置（用于密码传输加密）
-# 首次运行需要生成密钥对，复制生成的密钥到此处
+# RSA密钥配置（请替换为实际的密钥）
 rsa:
-  private-key: your-rsa-private-key-here
-  public-key: your-rsa-public-key-here
+  private-key: your-private-key-here
+  public-key: your-public-key-here
