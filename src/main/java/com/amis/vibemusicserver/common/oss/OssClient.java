@@ -15,7 +15,8 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.transfer.s3.S3TransferManager;
-import software.amazon.awssdk.transfer.s3.model.*;
+import software.amazon.awssdk.transfer.s3.model.CompletedUpload;
+import software.amazon.awssdk.transfer.s3.model.Upload;
 
 import java.io.IOException;
 import java.io.InputStream;

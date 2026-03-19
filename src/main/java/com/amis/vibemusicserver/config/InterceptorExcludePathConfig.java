@@ -1,5 +1,6 @@
 package com.amis.vibemusicserver.config;
 
+import com.amis.vibemusicserver.constant.PathConstant;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
@@ -19,27 +20,38 @@ public class InterceptorExcludePathConfig {
     public static List<String> getExcludePaths() {
         return Arrays.asList(
                 // 管理员相关
-                "/admin/login", "/admin/logout", "/admin/register",
+                PathConstant.ADMIN_LOGIN_PATH,
+                PathConstant.ADMIN_LOGOUT_PATH,
+                PathConstant.ADMIN_REGISTER_PATH,
 
                 // 用户认证相关
-                "/user/login", "/user/logout", "/user/register",
-                "/user/sendVerificationCode", "/user/resetUserPassword", "/user/verifyVerificationCode",
+                PathConstant.USER_LOGIN_PATH,
+                PathConstant.USER_LOGOUT_PATH,
+                PathConstant.USER_REGISTER_PATH,
+                PathConstant.USER_SEND_VERIFICATION_CODE_PATH,
+                PathConstant.USER_RESET_PASSWORD_PATH,
+                PathConstant.USER_VERIFY_VERIFICATION_CODE_PATH,
 
                 //token
-                "/token/refresh",
+                PathConstant.TOKEN_REFRESH_PATH,
 
                 // 公共内容相关
-                "/banner/getBannerList",
+                PathConstant.BANNER_LIST_PATH,
 
-                // 歌单相关
-                "/playlist/getAllPlaylists", "/playlist/getRecommendedPlaylists",
-                "/playlist/getPlaylistDetail/**",
+                // 歌单相关 - 允许所有非admin路径
+                PathConstant.PLAYLIST_ALL_PATH,
+                PathConstant.PLAYLIST_RECOMMENDED_PATH,
+                PathConstant.PLAYLIST_DETAIL_PATH,
+                PathConstant.PLAYLIST_COUNT_PATH,
 
                 // 歌手相关
-                "/artist/getAllArtists", "/artist/getArtistDetail/**",
+                PathConstant.ARTIST_ALL_PATH,
+                PathConstant.ARTIST_DETAIL_PATH,
 
                 // 歌曲相关
-                "/song/getAllSongs", "/song/getRecommendedSongs", "/song/getSongDetail/**"
+                PathConstant.SONG_LIST_PATH,
+                PathConstant.SONG_RECOMMENDED_PATH,
+                PathConstant.SONG_DETAIL_PATH
         );
     }
 
@@ -48,7 +60,9 @@ public class InterceptorExcludePathConfig {
      */
     public static List<String> getAdminExcludePaths() {
         return Arrays.asList(
-                "/admin/login", "/admin/logout", "/admin/register"
+                PathConstant.ADMIN_LOGIN_PATH,
+                PathConstant.ADMIN_LOGOUT_PATH,
+                PathConstant.ADMIN_REGISTER_PATH
         );
     }
 
@@ -57,8 +71,12 @@ public class InterceptorExcludePathConfig {
      */
     public static List<String> getUserExcludePaths() {
         return Arrays.asList(
-                "/user/login", "/user/logout", "/user/register",
-                "/user/sendVerificationCode", "/user/resetUserPassword", "/user/verifyVerificationCode"
+                PathConstant.USER_LOGIN_PATH,
+                PathConstant.USER_LOGOUT_PATH,
+                PathConstant.USER_REGISTER_PATH,
+                PathConstant.USER_SEND_VERIFICATION_CODE_PATH,
+                PathConstant.USER_RESET_PASSWORD_PATH,
+                PathConstant.USER_VERIFY_VERIFICATION_CODE_PATH
         );
     }
 
@@ -67,11 +85,15 @@ public class InterceptorExcludePathConfig {
      */
     public static List<String> getPublicContentExcludePaths() {
         return Arrays.asList(
-                "/banner/getBannerList",
-                "/playlist/getAllPlaylists", "/playlist/getRecommendedPlaylists",
-                "/playlist/getPlaylistDetail/**",
-                "/artist/getAllArtists", "/artist/getArtistDetail/**",
-                "/song/getAllSongs", "/song/getRecommendedSongs", "/song/getSongDetail/**"
+                PathConstant.BANNER_LIST_PATH,
+                PathConstant.PLAYLIST_ALL_PATH,
+                PathConstant.PLAYLIST_RECOMMENDED_PATH,
+                PathConstant.PLAYLIST_DETAIL_PATH,
+                PathConstant.ARTIST_ALL_PATH,
+                PathConstant.ARTIST_DETAIL_PATH,
+                PathConstant.SONG_LIST_PATH,
+                PathConstant.SONG_RECOMMENDED_PATH,
+                PathConstant.SONG_DETAIL_PATH
         );
     }
 }

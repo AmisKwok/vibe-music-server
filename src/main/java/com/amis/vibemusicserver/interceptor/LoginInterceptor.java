@@ -103,9 +103,12 @@ public class LoginInterceptor implements HandlerInterceptor {
         // 获取 Spring 的 PathMatcher 实例用于路径匹配
         PathMatcher pathMatcher = new AntPathMatcher();
 
-        // 定义允许未登录用户访问的路径
+        // 定义允许未登录用户访问的路径 - 不包含admin路径
         List<String> allowedPaths = Arrays.asList(
+                PathConstant.PLAYLIST_ALL_PATH,
+                PathConstant.PLAYLIST_RECOMMENDED_PATH,
                 PathConstant.PLAYLIST_DETAIL_PATH,
+                PathConstant.PLAYLIST_COUNT_PATH,
                 PathConstant.ARTIST_DETAIL_PATH,
                 PathConstant.SONG_LIST_PATH,
                 PathConstant.SONG_DETAIL_PATH
