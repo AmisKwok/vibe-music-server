@@ -170,9 +170,9 @@ public SongVO getSongById(Long id) {
 
 | Technology | Version | Description |
 |------|------|------|
-| Spring Boot | 3.2.0 | Backend framework |
+| Spring Boot | 3.5.10 | Backend framework |
 | Java | 21 | Programming language |
-| Maven | 3.6+ | Project build tool |
+| Maven | 3.9+ | Project build tool |
 
 ### Data Storage
 
@@ -263,7 +263,7 @@ This project adopts the classic **Three-Layer Architecture** pattern:
 
 ### Prerequisites
 
-- JDK 17 or higher
+- JDK 21 or higher
 - MySQL 8.0+
 - Redis 7.0+
 - MinIO latest version
